@@ -1,0 +1,27 @@
+TODO before 1.0
+===============
+
+- More configurability:
+        - Let the user choose between radians and degrees for trigonometric
+          functions
+        - Let the user choose history length
+        - Let the user choose number of significant digits in output
+
+- Check portability:
+        - sqrt(-1), x/0.0 etc. -->  crash, or NaN/Inf?
+        - Are functions like log2 and cbrt available everywhere, etc.?
+
+- Take a look at the localisation/translation stuff.
+
+- Write some documentation.
+
+
+
+Beyond 1.0:
+===========
+
+- Better precision (e.g. using mpfr)
+
+- More functions? (Hyperbolics? Gamma?)
+        - "R → R" functions are easy to add, as long as they are implemented
+          in the C math library.

@@ -1,0 +1,64 @@
+LL grammar (ε detones en empty string):
+
+expr            ->      term termtail
+
+termtail        ->      add_op term termtail  |  ε                       
+
+term            ->      factor factortail
+
+factortail      ->      mult_op factor factortail  |  ε                       
+
+factor          ->      spow spowtail
+
+spowtail        ->      pow_op spow spowtail  |  ε                       
+
+spow            ->      - spow  |  pow
+
+pow             ->      ( expr )  |  function ( expr )  |  constant |  NUM
+
+add_op          ->      +  |  -
+
+mult_op         ->      *  |  /
+
+pow_op          ->      ^  |  **
+
+
+
+A note on tails:
+================
+
+To get left-to-right evaulation for operators of
+the same precedence level (important for e.g. '-' and '/'),
+expression like
+
+        a - b - c - d
+
+should result in a tree like this:
+
+                         -
+                       /   \
+                      -     d
+                    /   \
+                   -     c
+                 /   \
+                a     b
+
+
+
+
+A note on power operators:
+==========================
+
+Should power operators be evaluated left-to-right, or
+right-to-left?  Different languages/math environments do it differently:
+
+        right-to-left: x^y^z = x^(y^z) : python, fortran, awk, R,
+                                         scilab
+        left-to-right: x^y^z = (x^y)^z : octave, Matlab
+
+Right-to-left seems to be more common, and I feel we should
+follow common conventions. OTOH, there are still a few
+environments that do it left-to-right, so it's not a very strong
+convention, and since we evaulate other operators left-to-right,
+I feel we should do it for power operators as well.  So we do it
+left-to-right.
