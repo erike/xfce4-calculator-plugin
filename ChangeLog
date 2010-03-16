@@ -2,3 +2,7 @@
 
         * panel-plugin/calculator.c (calc_construct): Set LC_NUMERIC locale
           to "C".
+
+2010-03-17: Erik Edelmann <erik.edelmann@iki.fi>
+
+        * TODO: Updated TODO list.

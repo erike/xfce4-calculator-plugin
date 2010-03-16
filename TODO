@@ -13,8 +13,8 @@ TODO before 1.0
 
 - Take a look at the localisation/translation stuff.
 
-- Write some documentation.
-
+- Add support for multi argument functions
+        - Then add support for pow(x,y) and atan2(x,y)
 
 
 Beyond 1.0:
@@ -23,5 +23,5 @@ Beyond 1.0:
 - Better precision (e.g. using mpfr)
 
 - More functions? (Hyperbolics? Gamma?)
-        - "R → R" functions are easy to add, as long as they are implemented
+        - "R^n → R" functions are easy to add, as long as they are implemented
           in the C math library.
