@@ -23,6 +23,7 @@
 #endif
 
 #include <string.h>
+#include <locale.h>
 #include <gtk/gtk.h>
 #include <libxfce4util/libxfce4util.h>
 #include <libxfcegui4/libxfcegui4.h>
@@ -366,6 +367,9 @@ static void calc_configure(XfcePanelPlugin *plugin, CalcPlugin *calc)
 static void calc_construct(XfcePanelPlugin *plugin)
 {
     CalcPlugin *calc;
+
+    /* Make sure the comma sign (",") isn't treated as a decimal separator. */
+    setlocale(LC_NUMERIC, "C");
 
     xfce_textdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR, "UTF-8");
 
