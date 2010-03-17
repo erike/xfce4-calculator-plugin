@@ -8,6 +8,5 @@ The file 'INSTALL' contains generic installation instructions.
 How to report bugs?
 ===================
 
-Bugs should be reported to the Xfce bug tracking system
-(http://bugzilla.xfce.org, product 'Xfce Panel Plugins', Component
-'xfce4-calculator-plugin'). You will need to create an account for yourself.
+Bugs should be reported to the issue tracker for xfce4-calculator-plugin at
+gitHub: http://github.com/erike/xfce4-calculator-plugin/issues.
