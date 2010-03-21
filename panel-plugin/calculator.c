@@ -154,7 +154,7 @@ static void entry_enter_cb(GtkEntry *entry, CalcPlugin *calc)
 
         r = eval_parse_tree(parsetree, calc->degrees);
 
-        output = g_strdup_printf("%.10g", r);
+        output = g_strdup_printf("%.16g", r);
         gtk_entry_set_text(entry, output);
         gtk_editable_set_position(GTK_EDITABLE(entry), -1);
         g_free(output);
