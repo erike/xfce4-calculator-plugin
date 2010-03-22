@@ -2,8 +2,6 @@ TODO before 1.0
 ===============
 
 - More configurability:
-        - Let the user choose between radians and degrees for trigonometric
-          functions
         - Let the user choose history length
         - Let the user choose number of significant digits in output
 

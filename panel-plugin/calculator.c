@@ -46,6 +46,8 @@ typedef struct {
     GtkWidget *ebox;
     GtkWidget *hvbox;
     GtkWidget *combo;
+    GtkWidget *degrees_button;
+    GtkWidget *radians_button;
 
     GList *expr_hist;   // Expression history
     
@@ -294,6 +296,27 @@ calc_plugin_size_changed (GtkSpinButton *spin, CalcPlugin *calc)
 }
 
 
+/* Called when the "trigonometrics use degree/radians" menu items change state.
+
+   Note that since they are radio buttons, grouped together, they will allways
+   change state both at the same time - one to "active" and the other to "not
+   active". Since we actually need only one call per time, we'll ignore the call
+   for the de-activated button. */
+
+static void angle_unit_chosen(GtkCheckMenuItem *button, CalcPlugin *calc)
+{
+    if (!gtk_check_menu_item_get_active(button))
+        return;
+    
+    if (button == (GtkCheckMenuItem *)calc->degrees_button)
+        calc->degrees = TRUE;
+    else {
+        g_assert(button == (GtkCheckMenuItem *)calc->radians_button);
+        calc->degrees = FALSE;
+    }
+}
+
+
 static void calc_dialog_response(GtkWidget *dialog, gint response,
                                  CalcPlugin *calc)
 {
@@ -367,6 +390,7 @@ static void calc_configure(XfcePanelPlugin *plugin, CalcPlugin *calc)
 static void calc_construct(XfcePanelPlugin *plugin)
 {
     CalcPlugin *calc;
+    GtkWidget *degrees, *radians;
 
     /* Make sure the comma sign (",") isn't treated as a decimal separator. */
     setlocale(LC_NUMERIC, "C");
@@ -392,4 +416,33 @@ static void calc_construct(XfcePanelPlugin *plugin)
     xfce_panel_plugin_menu_show_configure(plugin);
     g_signal_connect(G_OBJECT(plugin), "configure-plugin",
                      G_CALLBACK(calc_configure), calc);
+
+
+    // Add controls for choosing angle unit to the menu.
+    degrees = gtk_radio_menu_item_new_with_label(
+                    NULL,
+                    "Trigonometrics use degrees");
+    radians = gtk_radio_menu_item_new_with_label(
+                    gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(degrees)),
+                    "Trigonometrics use radians");
+
+    if (calc->degrees)
+        gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(degrees), TRUE);
+    else
+        gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(radians), TRUE);
+
+    g_signal_connect(G_OBJECT(degrees), "toggled",
+                     G_CALLBACK(angle_unit_chosen), calc);
+
+    g_signal_connect(G_OBJECT(radians), "toggled",
+                     G_CALLBACK(angle_unit_chosen), calc);
+
+    gtk_widget_show(degrees);
+    gtk_widget_show(radians);
+
+    xfce_panel_plugin_menu_insert_item(plugin, GTK_MENU_ITEM(degrees));
+    xfce_panel_plugin_menu_insert_item(plugin, GTK_MENU_ITEM(radians));
+
+    calc->degrees_button = degrees;
+    calc->radians_button = radians;
 }
