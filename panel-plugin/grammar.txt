@@ -1,4 +1,5 @@
 LL grammar (ε detones en empty string):
+=======================================
 
 expr            ->      term termtail
 
