@@ -9,8 +9,8 @@ dnl ***************************
 dnl *** Version information ***
 dnl ***************************
 m4_define([calculator_version_major], [0])
-m4_define([calculator_version_minor], [4])
-m4_define([calculator_version_micro], [1])
+m4_define([calculator_version_minor], [5])
+m4_define([calculator_version_micro], [0])
 m4_define([calculator_version],
 [calculator_version_major().calculator_version_minor().calculator_version_micro()])
 
