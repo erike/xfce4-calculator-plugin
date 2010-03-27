@@ -260,15 +260,15 @@ static void calc_free(XfcePanelPlugin *plugin, CalcPlugin *calc)
 
 
 static void calc_orientation_changed(XfcePanelPlugin *plugin,
-                                           GtkOrientation orientation,
-                                           CalcPlugin *calc)
+                                     GtkOrientation orientation,
+                                     CalcPlugin *calc)
 {
     xfce_hvbox_set_orientation(XFCE_HVBOX(calc->hvbox), orientation);
 }
 
 
 static gboolean calc_size_changed(XfcePanelPlugin *plugin, gint size,
-                                       CalcPlugin *calc)
+                                  CalcPlugin *calc)
 {
     GtkOrientation orientation;
 
@@ -282,21 +282,23 @@ static gboolean calc_size_changed(XfcePanelPlugin *plugin, gint size,
     return TRUE;
 }
 
-static gboolean
-calc_plugin_update_size (XfcePanelPlugin *plugin, gint size, CalcPlugin *calc)
+
+static gboolean calc_plugin_update_size(XfcePanelPlugin *plugin, gint size,
+                                        CalcPlugin *calc)
 {
-	g_return_val_if_fail (calc != NULL, FALSE);
-	g_return_val_if_fail (calc->combo != NULL && GTK_IS_ENTRY (GTK_COMBO(calc->combo)->entry), FALSE);
+	g_assert(calc);
+	g_assert(calc->combo);
+
 	calc->size = size;
-	gtk_entry_set_width_chars (GTK_ENTRY(GTK_COMBO(calc->combo)->entry), size);
+	gtk_entry_set_width_chars(GTK_ENTRY(GTK_COMBO(calc->combo)->entry), size);
 	return TRUE;
 }
 
-static void
-calc_plugin_size_changed (GtkSpinButton *spin, CalcPlugin *calc)
+
+static void calc_plugin_size_changed(GtkSpinButton *spin, CalcPlugin *calc)
 {
-	g_return_if_fail (calc != NULL);
-	calc_plugin_update_size (NULL, gtk_spin_button_get_value_as_int (spin), calc);
+	g_assert(calc);
+	calc_plugin_update_size(NULL, gtk_spin_button_get_value_as_int(spin), calc);
 }
 
 
@@ -372,26 +374,27 @@ static void calc_configure(XfcePanelPlugin *plugin, CalcPlugin *calc)
                      G_CALLBACK(calc_dialog_response), calc);
 
 
-	frame = xfce_create_framebox (_("Appearance"), &bin);
+	frame = xfce_create_framebox(_("Appearance"), &bin);
 
-	gtk_container_set_border_width (GTK_CONTAINER (frame), 6);
-	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), frame, TRUE, TRUE, 0);
-	gtk_widget_show (frame);
+	gtk_container_set_border_width(GTK_CONTAINER(frame), 6);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), frame, TRUE, TRUE, 0);
+	gtk_widget_show(frame);
 
-	hbox = gtk_hbox_new (FALSE, 8);
-	gtk_container_add (GTK_CONTAINER (bin), hbox);
-	gtk_widget_show (hbox);
+	hbox = gtk_hbox_new(FALSE, 8);
+	gtk_container_add(GTK_CONTAINER (bin), hbox);
+	gtk_widget_show(hbox);
 
-	size_label = gtk_label_new (_("Width (in chars):"));
-	gtk_box_pack_start (GTK_BOX (hbox), size_label, FALSE, TRUE, 0);
-	gtk_widget_show (size_label);
-	adjustment = gtk_adjustment_new (calc->size, 5, 100, 1, 5, 10);
-	size_spin = gtk_spin_button_new (GTK_ADJUSTMENT (adjustment), 1, 0);
-	gtk_widget_add_mnemonic_label (size_spin, size_label);
-	gtk_box_pack_start (GTK_BOX (hbox), size_spin, FALSE, TRUE, 0);
-	gtk_widget_show (size_spin);
-	gtk_spin_button_set_value (GTK_SPIN_BUTTON (size_spin), calc->size);
-	g_signal_connect (size_spin, "value-changed", G_CALLBACK (calc_plugin_size_changed), calc);
+	size_label = gtk_label_new(_("Width (in chars):"));
+	gtk_box_pack_start(GTK_BOX(hbox), size_label, FALSE, TRUE, 0);
+	gtk_widget_show(size_label);
+	adjustment = gtk_adjustment_new(calc->size, 5, 100, 1, 5, 10);
+	size_spin = gtk_spin_button_new(GTK_ADJUSTMENT(adjustment), 1, 0);
+	gtk_widget_add_mnemonic_label(size_spin, size_label);
+	gtk_box_pack_start(GTK_BOX(hbox), size_spin, FALSE, TRUE, 0);
+	gtk_widget_show(size_spin);
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(size_spin), calc->size);
+	g_signal_connect(size_spin, "value-changed",
+                     G_CALLBACK(calc_plugin_size_changed), calc);
 
 
     frame = xfce_create_framebox (_("History"), &bin);
@@ -411,7 +414,8 @@ static void calc_configure(XfcePanelPlugin *plugin, CalcPlugin *calc)
     size_spin = gtk_spin_button_new(GTK_ADJUSTMENT(adjustment), 1, 0);
     gtk_box_pack_start(GTK_BOX(hbox), size_spin, FALSE, TRUE, 0);
     gtk_widget_show (size_spin);
-    g_signal_connect(size_spin, "value-changed", G_CALLBACK(calc_hist_size_changed), calc);
+    g_signal_connect(size_spin, "value-changed",
+                     G_CALLBACK(calc_hist_size_changed), calc);
 
 
     gtk_widget_show(dialog);
