@@ -409,10 +409,8 @@ static void calc_configure(XfcePanelPlugin *plugin, CalcPlugin *calc)
     gtk_widget_show(size_label);
     adjustment = gtk_adjustment_new(calc->hist_size, 0, 100, 1, 10, 20);
     size_spin = gtk_spin_button_new(GTK_ADJUSTMENT(adjustment), 1, 0);
-    //gtk_widget_add_mnemonic_label (size_spin, size_label);
     gtk_box_pack_start(GTK_BOX(hbox), size_spin, FALSE, TRUE, 0);
     gtk_widget_show (size_spin);
-    //gtk_spin_button_set_value (GTK_SPIN_BUTTON (size_spin), calc->size);
     g_signal_connect(size_spin, "value-changed", G_CALLBACK(calc_hist_size_changed), calc);
 
 
