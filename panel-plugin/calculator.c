@@ -37,7 +37,7 @@
 // Default settings
 #define DEFAULT_DEGREES FALSE
 #define DEFAULT_SIZE 20
-#define DEFAULT_MAX_N_EXPR_HIST 25
+#define DEFAULT_HIST_SIZE 25
 
 
 typedef struct {
@@ -53,7 +53,8 @@ typedef struct {
     
     // Settings
     gboolean degrees; // Degrees or radians for trigonometric functions?
-    gint size;		// Size of comboboxentry 
+    gint size;		  // Size of comboboxentry 
+    gint hist_size;
 } CalcPlugin;
 
 
@@ -76,6 +77,7 @@ void calc_save_config(XfcePanelPlugin *plugin, CalcPlugin *calc)
     if (rc != NULL) {
         xfce_rc_write_bool_entry(rc, "degrees", calc->degrees);
         xfce_rc_write_int_entry(rc, "size", calc->size);
+        xfce_rc_write_int_entry(rc, "hist_size", calc->hist_size);
         xfce_rc_close(rc);
     }
 }
@@ -97,16 +99,18 @@ static void calc_read_config(CalcPlugin *calc)
     if (rc) {
         calc->degrees = xfce_rc_read_bool_entry(rc, "degrees", DEFAULT_DEGREES);
         calc->size = xfce_rc_read_int_entry(rc, "size", DEFAULT_SIZE);
+        calc->hist_size = xfce_rc_read_int_entry(rc, "hist_size", DEFAULT_HIST_SIZE);
         xfce_rc_close(rc);
     } else {
         /* Something went wrong, apply default values. */
         calc->degrees = DEFAULT_DEGREES;
         calc->size = DEFAULT_SIZE;
+        calc->hist_size = DEFAULT_HIST_SIZE;
     }
 }
 
 
-static GList *add_to_expr_hist(GList *ehist, const gchar *str)
+static GList *add_to_expr_hist(GList *ehist, gint hist_size, const gchar *str)
 {
     GList *elem;
 
@@ -120,7 +124,7 @@ static GList *add_to_expr_hist(GList *ehist, const gchar *str)
     ehist = g_list_append(ehist, g_strdup(str));
 
     // Remove oldest, if list is growing too long.
-    if (g_list_length(ehist) > DEFAULT_MAX_N_EXPR_HIST) {
+    if (g_list_length(ehist) > hist_size) {
         elem = g_list_first(ehist);
         g_free(elem->data);
         ehist = g_list_delete_link(ehist, elem);
@@ -147,7 +151,7 @@ static void entry_enter_cb(GtkEntry *entry, CalcPlugin *calc)
         return;
     }
 
-    calc->expr_hist = add_to_expr_hist(calc->expr_hist, input);
+    calc->expr_hist = add_to_expr_hist(calc->expr_hist, calc->hist_size, input);
     gtk_combo_set_popdown_strings(GTK_COMBO(calc->combo), calc->expr_hist);
 
     if (parsetree) {
@@ -296,6 +300,13 @@ calc_plugin_size_changed (GtkSpinButton *spin, CalcPlugin *calc)
 }
 
 
+static void calc_hist_size_changed(GtkSpinButton *spin, CalcPlugin *calc)
+{
+    g_assert(calc);
+    calc->hist_size = gtk_spin_button_get_value_as_int(spin);
+}
+
+
 /* Called when the "trigonometrics use degree/radians" menu items change state.
 
    Note that since they are radio buttons, grouped together, they will allways
@@ -381,6 +392,29 @@ static void calc_configure(XfcePanelPlugin *plugin, CalcPlugin *calc)
 	gtk_widget_show (size_spin);
 	gtk_spin_button_set_value (GTK_SPIN_BUTTON (size_spin), calc->size);
 	g_signal_connect (size_spin, "value-changed", G_CALLBACK (calc_plugin_size_changed), calc);
+
+
+    frame = xfce_create_framebox (_("History"), &bin);
+
+    gtk_container_set_border_width(GTK_CONTAINER (frame), 6);
+    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), frame, TRUE, TRUE, 0);
+    gtk_widget_show (frame);
+
+    hbox = gtk_hbox_new(FALSE, 8);
+    gtk_container_add(GTK_CONTAINER(bin), hbox);
+    gtk_widget_show(hbox);
+
+    size_label = gtk_label_new (_("Size:"));
+    gtk_box_pack_start(GTK_BOX(hbox), size_label, FALSE, TRUE, 0);
+    gtk_widget_show(size_label);
+    adjustment = gtk_adjustment_new(calc->hist_size, 0, 100, 1, 10, 20);
+    size_spin = gtk_spin_button_new(GTK_ADJUSTMENT(adjustment), 1, 0);
+    //gtk_widget_add_mnemonic_label (size_spin, size_label);
+    gtk_box_pack_start(GTK_BOX(hbox), size_spin, FALSE, TRUE, 0);
+    gtk_widget_show (size_spin);
+    //gtk_spin_button_set_value (GTK_SPIN_BUTTON (size_spin), calc->size);
+    g_signal_connect(size_spin, "value-changed", G_CALLBACK(calc_hist_size_changed), calc);
+
 
     gtk_widget_show(dialog);
 
