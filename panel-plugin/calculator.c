@@ -88,7 +88,7 @@ static void calc_read_config(CalcPlugin *calc)
     XfceRc *rc;
     gchar *file;
 
-    file = xfce_panel_plugin_save_location(calc->plugin, TRUE);
+    file = xfce_panel_plugin_lookup_rc_file(calc->plugin);
 
     if (file) {
         rc = xfce_rc_simple_open(file, TRUE);
